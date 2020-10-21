@@ -6,24 +6,48 @@ const messageContainer = document.getElementById('message-container')
 const messageForm = document.getElementById('send-form')
 const messageInput = document.getElementById('message-input')
 
+
+//This takes in a name--
+const name = prompt('What is your awesome name?')
+appendMessage('Welcome! You have signed on!')//This is using the already created function to add a message to the screen
+socket.emit('new-user', name)
+
+
+//It takes the message (messageInput) from above, and adds things here #2
 socket.on('chat-message', (data) => {
-  appendMessage(data)//this is sending appendMessage
+  appendMessage(`${data.name}:${data.message}`)//this is sending appendMessage
 })
 
-messageForm.addEventListener('submit', e =>{
-  e.preventDefault()/*this removes the auto refresh when you send things*/
-  const message = messageInput.value /*this links to the input type, it saves it*/
-  socket.emit('send-chat-message', message)/*every emit takes two paramiters*/
-  console.log()
-  messageInput.value = ''/*this emptys out the content from what you just wrote*/
-})/*e is the standard for event, its just a callback*/
-/*every emit takes two paramiters*/
+socket.on('user-connected', (name) => {
+  appendMessage(`${name} connected`)
+  // socket.broadcast.emit = ${name};
+})
 
+socket.on('user-disconnected', (name) => {
+  appendMessage(`${name} disconnect`)
+  // socket.broadcast.emit = ${name};
+})
+
+// socket.on('user-disconnected', (name) =>{
+//   appendMessage(`Byee ${name}!`)
+// })
+
+messageForm.addEventListener('submit', (e) =>{
+  e.preventDefault() //this removes the auto refresh when you send things*/
+  const message = messageInput.value //this links to the input type, it saves it*/
+  appendMessage(`you:${message}`)
+  socket.emit('send-chat-message', message) //every emit takes two paramiters 
+  messageInput.value = '' //this emptys out the content from what you just wrote
+}) //e is the standard for event, its just a callback
+ //every emit takes two paramiters
+
+
+//Then it goes here #3 
 function appendMessage(message){
   const messageElement = document.createElement('div')//This creates the new message going back
   messageElement.innerText = message//inside the div, we want to add the message
   messageContainer.append(messageElement)
-}
-//conatiner is big div
-//prepend puts it in the front
-//append puts it at the end
+}//IT WRITES THE MESSAGE ON THE SCREEN
+
+
+// appendMessage(name);
